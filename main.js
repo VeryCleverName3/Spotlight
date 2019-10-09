@@ -385,7 +385,9 @@ function move(){
 
         //P1 vertical movement
         if(keyDown[87] && collidingWithPlatform(p1)){
-                p1.velocityY = -0.0075 * s;
+                if(collisionSide(p1, collidingWithPlatform(p1)) == "top"){
+                        p1.velocityY = -0.0075 * s;
+                }
         }
 
         p1.y += p1.velocityY;
@@ -416,7 +418,9 @@ function move(){
 
         //P2 vertical movement
         if(keyDown[38] && collidingWithPlatform(p2)){
-                p2.velocityY = -0.0075 * s;
+                if(collisionSide(p2, collidingWithPlatform(p2)) == "top"){
+                        p2.velocityY = -0.0075 * s;
+                }
         }
 
         p2.y += p2.velocityY;
