@@ -85,8 +85,8 @@ onkeyup = function(e){
 //debug zone ----------------------------------------------------------------------------------------------------
 onmousemove = function(e){
         if(keyDown[32]){
-                p1.x = e.clientX;
-                p1.y = e.clientY;
+                light0.x = e.clientX;
+                light0.y = e.clientY;
         }
 }
 var light0 = new LightSource(s / 8, s / 2 - (p1.size / 2));
