@@ -105,10 +105,11 @@ function update(){
         ctx.fillRect(0, 0, s / 2, s / 2);
         ctx.fillStyle = color2;
         ctx.fillRect(s / 2, 0, s / 2, s / 2);
+        move();
         drawLights();
         p1.draw();
         p2.draw();
-        move();
+        drawPlatforms();
 }
 
 //Constructor for light source
@@ -395,30 +396,35 @@ function move(){
 
         //P1 vertical movement
         if(keyDown[87] && collidingWithPlatform(p1)){
-                if(collisionSide(p1, collidingWithPlatform(p1)) == "top"){
-                        p1.velocityY = -0.0075 * s;
+                var collidePlats = collidingWithPlatform(p1);
+                for(var i = 0; i < collidePlats.length; i++){
+                        if(collisionSide(p1, collidePlats[i]) == "top"){
+                                p1.velocityY = -0.0075 * s;
+                        }
                 }
         }
 
         p1.y += p1.velocityY;
 
-        if(collidingWithPlatformBad(p1)){
-                var collidePlat = collidingWithPlatform(p1);
-                switch(collisionSide(p1, collidePlat)){
-                        case "left":
-                                p1.x = collidePlat.left() - (p1.size / 2);
-                                break;
-                        case "right":
-                                p1.x = collidePlat.right() + (p1.size / 2);
-                                break;
-                        case "top":
-                                p1.y = collidePlat.top();
-                                p1.velocityY = 0;
-                                break;
-                        case "bottom":
-                                p1.y = collidePlat.bottom() + p1.size;
-                                p1.velocityY = 0;
-                                break;
+        if(collidingWithPlatform(p1) != []){
+                var collidePlats = collidingWithPlatform(p1);
+                for(var i = 0; i < collidePlats.length; i++){
+                        switch(collisionSide(p1, collidePlats[i])){
+                                case "left":
+                                        p1.x = collidePlats[i].left() - (p1.size / 2);
+                                        break;
+                                case "right":
+                                        p1.x = collidePlats[i].right() + (p1.size / 2);
+                                        break;
+                                case "top":
+                                        p1.y = collidePlats[i].top();
+                                        p1.velocityY = 0;
+                                        break;
+                                case "bottom":
+                                        p1.y = collidePlats[i].bottom() + p1.size;
+                                        p1.velocityY = 0;
+                                        break;
+                        }
                 }
         }
 
@@ -428,30 +434,35 @@ function move(){
 
         //P2 vertical movement
         if(keyDown[38] && collidingWithPlatform(p2)){
-                if(collisionSide(p2, collidingWithPlatform(p2)) == "top"){
-                        p2.velocityY = -0.0075 * s;
+                var collidePlats = collidingWithPlatform(p2);
+                for(var i = 0; i < collidePlats.length; i++){
+                        if(collisionSide(p2, collidePlats[i]) == "top"){
+                                p2.velocityY = -0.0075 * s;
+                        }
                 }
         }
 
         p2.y += p2.velocityY;
 
-        if(collidingWithPlatformBad(p2)){
-                var collidePlat = collidingWithPlatform(p2);
-                switch(collisionSide(p2, collidePlat)){
-                        case "left":
-                                p2.x = collidePlat.left() - (p2.size / 2);
-                                break;
-                        case "right":
-                                p2.x = collidePlat.right() + (p2.size / 2);
-                                break;
-                        case "top":
-                                p2.y = collidePlat.top();
-                                p2.velocityY = 0;
-                                break;
-                        case "bottom":
-                                p2.y = collidePlat.bottom() + p2.size;
-                                p2.velocityY = 0;
-                                break;
+        if(collidingWithPlatform(p2) != []){
+                var collidePlats = collidingWithPlatform(p2);
+                for(var i = 0; i < collidePlats.length; i++){
+                        switch(collisionSide(p2, collidePlats[i])){
+                                case "left":
+                                        p2.x = collidePlats[i].left() - (p2.size / 2);
+                                        break;
+                                case "right":
+                                        p2.x = collidePlats[i].right() + (p2.size / 2);
+                                        break;
+                                case "top":
+                                        p2.y = collidePlats[i].top();
+                                        p2.velocityY = 0;
+                                        break;
+                                case "bottom":
+                                        p2.y = collidePlats[i].bottom() + p2.size;
+                                        p2.velocityY = 0;
+                                        break;
+                        }
                 }
         }
 
@@ -460,24 +471,18 @@ function move(){
         }
 }
 
-//Returns platform colliding with p argument, if any
+//Returns platforms colliding with p argument, if any
 function collidingWithPlatform(p){
+        var collidePlats = [];
         for(var i = 0; i < platforms.length; i++){
                 if(colliding(p, platforms[i])){
-                        return platforms[i];
+                        collidePlats[collidePlats.length] = platforms[i];
                 }
         }
-        return false;
-}
-
-//same as above, but intersection
-function collidingWithPlatformBad(p){
-        for(var i = 0; i < platforms.length; i++){
-                if(collidingBad(p, platforms[i])){
-                        return platforms[i];
-                }
+        if(collidePlats == []){
+                return false;
         }
-        return false;
+        return collidePlats;
 }
 
 //draws platforms
