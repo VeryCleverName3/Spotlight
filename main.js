@@ -1,3 +1,7 @@
+/*
+This file is where most of the game's core functions are handled. These include timing, physics, light mechanics, and player movements
+*/
+
 //Canvas stuff
 var c = document.getElementById("mainCanvas");
 var ctx = c.getContext("2d");
