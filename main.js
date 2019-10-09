@@ -9,6 +9,10 @@ c.height = window.innerWidth / 2;
 c.width = window.innerWidth;
 var s = c.width;
 
+//Colors for the game
+var color1 = "black";
+var color2 = "white";
+
 //Array of LightSources
 var lights = [];
 
@@ -21,7 +25,7 @@ var p1 = {
         y: s / 2,
         size: 0.025 * s,
         draw: function(){
-                ctx.fillStyle = "black";
+                ctx.fillStyle = color1;
                 ctx.fillRect(this.x - (this.size / 2), this.y -this. size, this.size, this.size);
         },
         top: function(){
@@ -46,7 +50,7 @@ var p2 = {
         y: s / 2,
         size: 0.025 * s,
         draw: function(){
-                ctx.fillStyle = "white";
+                ctx.fillStyle = color2;
                 ctx.fillRect(this.x - (this.size / 2), this.y -this. size, this.size, this.size);
         },
         top: function(){
@@ -97,8 +101,10 @@ setInterval(update, 1000/60);
 //Update function, called 60 times a second, most stuff is called here
 function update(){
         ctx.clearRect(0, 0, s, s);
-        ctx.fillStyle = "black";
-        ctx.fillRect(0, 0, s / 2, s);
+        ctx.fillStyle = color1;
+        ctx.fillRect(0, 0, s / 2, s / 2);
+        ctx.fillStyle = color2;
+        ctx.fillRect(s / 2, 0, s / 2, s / 2);
         drawLights();
         p1.draw();
         p2.draw();
@@ -124,17 +130,17 @@ function LightSource(x, y){
         //draws the bulbs of the lights based on if in shadows or not
         this.drawBulb = function(){
                 if(this.type == 0){
-                        ctx.fillStyle = "white";
+                        ctx.fillStyle = color2;
                 } else {
-                        ctx.fillStyle = "black";
+                        ctx.fillStyle = color1;
                 }
                 for(var i = 0; i < lights.length; i++){
                         if(lights[i].type != this.type){
                                 if(inShadow(this, lights[i])){
                                         if(this.type == 0){
-                                                ctx.fillStyle = "black";
+                                                ctx.fillStyle = color1;
                                         } else {
-                                                ctx.fillStyle = "white";
+                                                ctx.fillStyle = color2;
                                         }
                                 }
                         }
@@ -167,7 +173,7 @@ function LightSource(x, y){
                                 m = (p1.y - this.y) / ((p1.x - (p1.size / 2)) - this.x);
                                 ctx.lineTo(s, (m * ((s)-this.x)) + this.y);
                                 ctx.lineTo(s / 2, (m * ((s / 2)-this.x)) + this.y);
-                                ctx.fillStyle = "black";
+                                ctx.fillStyle = color1;
                                 ctx.fill();
                                 ctx.closePath();
                         }
@@ -187,7 +193,7 @@ function LightSource(x, y){
                                 m = m = ((p1.y - p1.size) - this.y) / ((p1.x - (p1.size / 2)) - this.x);
                                 ctx.lineTo(s, (m * ((s)-this.x)) + this.y);
                                 ctx.lineTo(s / 2, (m * ((s / 2)-this.x)) + this.y);
-                                ctx.fillStyle = "black";
+                                ctx.fillStyle = color1;
                                 ctx.fill();
                                 ctx.closePath();
                         }
@@ -213,7 +219,7 @@ function LightSource(x, y){
                                 m = (p2.y - this.y) / ((p2.x - (p2.size / 2)) - this.x);
                                 ctx.lineTo(0, (m * ((0)-this.x)) + this.y);
                                 ctx.lineTo(s / 2, (m * ((s / 2)-this.x)) + this.y);
-                                ctx.fillStyle = "white";
+                                ctx.fillStyle = color2;
                                 ctx.fill();
                                 ctx.closePath();
                         }
@@ -234,7 +240,7 @@ function LightSource(x, y){
                                 m = ((p2.y - p2.size) - this.y) / ((p2.x - (p2.size / 2)) - this.x);
                                 ctx.lineTo(0, (m * ((0)-this.x)) + this.y);
                                 ctx.lineTo(s / 2, (m * ((s / 2)-this.x)) + this.y);
-                                ctx.fillStyle = "white";
+                                ctx.fillStyle = color2;
                                 ctx.fill();
                                 ctx.closePath();
                         }
@@ -317,8 +323,8 @@ function PlatformNormal (x, y, w, h){
         }
 
         this.draw = function(){
-                if(this.type == 0) shadowColorChange({x: this.centerX(), y: this.centerY(), type: this.type}, "white", "black");
-                if(this.type == 1) shadowColorChange({x: this.centerX(), y: this.centerY(), type: this.type}, "black", "white");
+                if(this.type == 0) shadowColorChange({x: this.centerX(), y: this.centerY(), type: this.type}, color2, color1);
+                if(this.type == 1) shadowColorChange({x: this.centerX(), y: this.centerY(), type: this.type}, color1, color2);
                 ctx.fillRect(x, y, w, h);
         }
 }
@@ -343,12 +349,12 @@ function collidingBad(a, b){
 }
 
 //Changes the color to given first or second color based on if shadow. First color is out of shadow, second is in shadow
-function shadowColorChange(obj, color1, color2){
-        ctx.fillStyle = color1;
+function shadowColorChange(obj, c1, c2){
+        ctx.fillStyle = c1;
         for(var i = 0; i < lights.length; i++){
                 if(obj.type != lights[i].type){
                         if(inShadow(obj, lights[i])){
-                                ctx.fillStyle = color2;
+                                ctx.fillStyle = c2;
                         }
                 }
         }
