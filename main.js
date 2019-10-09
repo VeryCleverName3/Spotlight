@@ -74,7 +74,7 @@ onkeyup = function(e){
         keyDown[e.which] = false;
 }
 
-//debug ----------------------------------------------------------------------------------------------------------
+//debug zone ----------------------------------------------------------------------------------------------------
 onmousemove = function(e){
         if(keyDown[32]){
                 p1.x = e.clientX;
@@ -86,6 +86,8 @@ var light1 = new LightSource(7 * s / 8, s / 4);
 var light2 = new LightSource(7 * s / 8, s / 8);
 var plat1 = new PlatformNormal(s / 8, s / 4, s / 8, s / 16);
 //end of debug zone ---------------------------------------------------------------------------------------------
+
+var ground = new PlatformNormal(0, s / 2, s, s / 2);
 
 //Timing control for update function
 setInterval(update, 1000/60);
@@ -329,7 +331,13 @@ function angleBetween(x1, y1, x2, y2){
         return a;
 }
 
+//returns if two objects are colliding
 function colliding(a, b){
+        return ( (a.bottom() >= b.top() && a.bottom() <= b.bottom() && ((a.right() >= b.left() && a.right() <= b.right())||(a.left() <= b.right() && a.left() >= b.left()))) || /*Next*/(a.top() <= b.bottom() && a.top() >= b.top() && ((a.right() >= b.left() && a.right() <= b.right())||(a.left() <= b.right() && a.left() >= b.left()))) || /*Next*/(a.right() >= b.left() && a.right() <= b.right() && ((a.bottom() >= b.top() && a.bottom() <= b.bottom()) || (a.top() <= b.bottom() && a.top() >= b.top()))) || /*Next*/(a.left() <= b.right() && a.left() >= b.left() && ((a.bottom() >= b.top() && a.bottom() <= b.bottom()) || (a.top() <= b.bottom() && a.top() >= b.top()))) );
+}
+
+//returns if two objects are intersecting
+function collidingBad(a, b){
         return ( (a.bottom() > b.top() && a.bottom() < b.bottom() && ((a.right() > b.left() && a.right() < b.right())||(a.left() < b.right() && a.left() > b.left()))) || /*Next*/(a.top() < b.bottom() && a.top() > b.top() && ((a.right() > b.left() && a.right() < b.right())||(a.left() < b.right() && a.left() > b.left()))) || /*Next*/(a.right() > b.left() && a.right() < b.right() && ((a.bottom() > b.top() && a.bottom() < b.bottom()) || (a.top() < b.bottom() && a.top() > b.top()))) || /*Next*/(a.left() < b.right() && a.left() > b.left() && ((a.bottom() > b.top() && a.bottom() < b.bottom()) || (a.top() < b.bottom() && a.top() > b.top()))) );
 }
 
@@ -347,7 +355,7 @@ function shadowColorChange(obj, color1, color2){
 
 //A is a player, B is a platform, returns side of platform player is on
 function collisionSide(a, b){
-        var angle = angleBetween(b.centerX(),  b.centerY(), a.x, a.centerY());
+        var angle = angleBetween(b.centerX(), b.centerY(), a.x, a.centerY());
         if((angle <= b.topLeftAngle() && angle >= 0) || (angle >= b.bottomLeftAngle() && angle <= 360)){
                 return "left";
         } else if(angle <= b.bottomLeftAngle() && angle >= b.bottomRightAngle()){
@@ -362,9 +370,9 @@ function collisionSide(a, b){
 //Moves players
 function move(){
         var speed = 0.005 * s;
-        var gravity = 0.00015 * s;
+        var gravity = 0.0003 * s;
         p1.velocityY += gravity;
-        p1.velocityY += gravity;
+        p2.velocityY += gravity;
         if(keyDown[65]){
                 p1.x -= speed;
         }
@@ -377,10 +385,85 @@ function move(){
         if(keyDown[39]){
                 p2.x += speed;
         }
-        if(keyDown[87]){
+
+        //P1 vertical movement
+        if(keyDown[87] && collidingWithPlatform(p1)){
                 p1.velocityY = -0.0075 * s;
         }
 
-
         p1.y += p1.velocityY;
+
+        if(collidingWithPlatformBad(p1)){
+                var collidePlat = collidingWithPlatform(p1);
+                switch(collisionSide(p1, collidePlat)){
+                        case "left":
+                                p1.x = collidePlat.left() - (p1.size / 2);
+                                break;
+                        case "right":
+                                p1.x = collidePlat.right() + (p1.size / 2);
+                                break;
+                        case "top":
+                                p1.y = collidePlat.top();
+                                p1.velocityY = 0;
+                                break;
+                        case "bottom":
+                                p1.y = collidePlat.bottom() + p1.size;
+                                p1.velocityY = 0;
+                                break;
+                }
+        }
+
+        if(p1.x > (s / 2) - (p1.size / 2)){
+                p1.x = (s / 2) - (p1.size / 2);
+        }
+
+        //P2 vertical movement
+        if(keyDown[38] && collidingWithPlatform(p2)){
+                p2.velocityY = -0.0075 * s;
+        }
+
+        p2.y += p2.velocityY;
+
+        if(collidingWithPlatformBad(p2)){
+                var collidePlat = collidingWithPlatform(p2);
+                switch(collisionSide(p2, collidePlat)){
+                        case "left":
+                                p2.x = collidePlat.left() - (p2.size / 2);
+                                break;
+                        case "right":
+                                p2.x = collidePlat.right() + (p2.size / 2);
+                                break;
+                        case "top":
+                                p2.y = collidePlat.top();
+                                p2.velocityY = 0;
+                                break;
+                        case "bottom":
+                                p2.y = collidePlat.bottom() + p2.size;
+                                p2.velocityY = 0;
+                                break;
+                }
+        }
+
+        if(p2.x < (s / 2) + (p2.size / 2)){
+                p2.x = (s / 2) + (p2.size / 2);
+        }
+}
+
+//Returns platform colliding with p argument, if any
+function collidingWithPlatform(p){
+        for(var i = 0; i < platforms.length; i++){
+                if(colliding(p, platforms[i])){
+                        return platforms[i];
+                }
+        }
+        return false;
+}
+
+function collidingWithPlatformBad(p){
+        for(var i = 0; i < platforms.length; i++){
+                if(collidingBad(p, platforms[i])){
+                        return platforms[i];
+                }
+        }
+        return false;
 }
