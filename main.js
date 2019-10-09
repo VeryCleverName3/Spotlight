@@ -17,7 +17,7 @@ var p1 = {
         y: s / 2,
         size: 0.025 * s,
         draw: function(){
-                ctx.fillStyle = "blue";
+                ctx.fillStyle = "black";
                 ctx.fillRect(this.x - (this.size / 2), this.y -this. size, this.size, this.size);
         },
         top: function(){
@@ -42,7 +42,7 @@ var p2 = {
         y: s / 2,
         size: 0.025 * s,
         draw: function(){
-                ctx.fillStyle = "red";
+                ctx.fillStyle = "white";
                 ctx.fillRect(this.x - (this.size / 2), this.y -this. size, this.size, this.size);
         },
         top: function(){
@@ -81,10 +81,8 @@ onmousemove = function(e){
                 p1.y = e.clientY;
         }
 }
-var light0 = new LightSource(s / 8, s / 4);
-var light1 = new LightSource(7 * s / 8, s / 4);
-var light2 = new LightSource(7 * s / 8, s / 8);
-var plat1 = new PlatformNormal(s / 8, s / 4, s / 8, s / 16);
+var light0 = new LightSource(s / 8, s / 2 - (p1.size / 2));
+var light1 = new LightSource(7 * s / 8, s / 2 - (p1.size / 2));
 //end of debug zone ---------------------------------------------------------------------------------------------
 
 var ground = new PlatformNormal(0, s / 2, s, s / 2);
@@ -100,7 +98,6 @@ function update(){
         drawLights();
         p1.draw();
         p2.draw();
-        plat1.draw();
         move();
 }
 
@@ -459,6 +456,7 @@ function collidingWithPlatform(p){
         return false;
 }
 
+//same as above, but intersection
 function collidingWithPlatformBad(p){
         for(var i = 0; i < platforms.length; i++){
                 if(collidingBad(p, platforms[i])){
@@ -466,4 +464,11 @@ function collidingWithPlatformBad(p){
                 }
         }
         return false;
+}
+
+//draws platforms
+function drawPlatforms(){
+        for(var i = 0; i < platforms.length; i++){
+                platforms[i].draw();
+        }
 }
