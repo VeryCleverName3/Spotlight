@@ -153,7 +153,6 @@ function toolSelector() {
 
 //Rectangle Tool
 //Hold e to drag plaform
-var contains = false;
 function platformDrag() {
     if (eDown) {
         if (mx > rectangleX) {

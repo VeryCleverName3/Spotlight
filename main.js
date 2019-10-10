@@ -287,6 +287,7 @@ function PlatformNormal (x, y, w, h){
         this.y = y;
         this.w = w;
         this.h = h;
+        this.id = "platform";
         platforms[platforms.length] = this;
 
         this.type = 0;
@@ -490,4 +491,42 @@ function drawPlatforms(){
         for(var i = 0; i < platforms.length; i++){
                 platforms[i].draw();
         }
+}
+
+
+//Export level (also adds quotations. Won't be necessary if interpreted as string.)
+function exportLevel() {
+    json = JSON.stringify(platforms);
+    json = ("'" + json + "'");
+
+    var filename = "level.json";
+    download(filename, json);
+
+}
+
+function download(filename, text) {
+    var element = document.createElement('a');
+    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+    element.setAttribute('download', filename);
+
+    element.style.display = 'none';
+    document.body.appendChild(element);
+
+    element.click();
+
+    document.body.removeChild(element);
+}
+
+//Import level
+function importLevel(file) {
+    json = JSON.parse(file);
+    for (i = 0; i < json.length; i++) {
+        if (json[i].id == "platform") {
+            console.log(json[i])
+            //platforms[i] = json[i];
+            new PlatformNormal(json[i].x, json[i].y, json[i].w, json[i].h);
+        }
+    }
+
+
 }
