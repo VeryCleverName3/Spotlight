@@ -108,6 +108,7 @@ var currentKey = null;
 var rectW = 10;
 var rectH = 10;
 var eDown = false;
+var platforms = [];
 
 onkeydown = function (e) {
     currentKey = e.which;
@@ -129,7 +130,6 @@ function changeImage(k) {
         image.src = "images/light.png";
     }
     document.getElementById('body').appendChild(image); 
-    console.log("hi");
 }
 
 function toolSelector() {
@@ -153,11 +153,33 @@ function toolSelector() {
 
 //Rectangle Tool
 //Hold e to drag plaform
+var contains = false;
 function platformDrag() {
     if (eDown) {
-        rectH = Math.abs(my - rectangleY);
-        rectW = -Math.abs(mx - rectangleX);
-        new PlatformNormal(rectangleX, rectangleY, rectW, rectH);
+        if (mx > rectangleX) {
+            rectW = Math.abs(mx - rectangleX);
+        }
+        else if (mx < rectangleX) {
+            rectW = -Math.abs(mx - rectangleX);
+        }
+        if (my > rectangleY) {
+            rectH = Math.abs(my - rectangleY);
+        }
+        else if (my < rectangleY) {
+            rectH = -Math.abs(my - rectangleY);
+        }
 
+
+        if (platforms.length == 0) {
+            new PlatformNormal(0, 0, 0, 0);
+        }
+        for (i = 0; i < platforms.length; i++) {
+            var x = platforms[i].x;
+            var y = platforms[i].y;
+            if (x == rectangleX && y == rectangleY) {
+                platforms.splice(i, i);
+            }
+        }
+        new PlatformNormal(rectangleX, rectangleY, rectW, rectH);
     }
 }
