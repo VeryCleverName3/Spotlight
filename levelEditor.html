@@ -12,11 +12,22 @@
                                 margin-right: auto;
                                 display: block;
                                 background-color: white;
+								z-index: 5;
                         }
+						#currentTool {
+								top: 0px;
+								z-index: 6;
+								padding: 0;
+								position: absolute;
+								width: 10%;
+								height: 10%;
+						}
                 </style>
         </head>
-        <body>
-                <canvas id="mainCanvas"></canvas>
-                <script src="levelEditor.js"></script>
-        </body>
+		<body id="body">
+			<canvas id="mainCanvas"></canvas>
+			<script src="main.js"></script>
+			<script src="levelEditor.js"></script>
+			<img id="currentTool" style="visibility: hidden" />
+		</body>
 </html>

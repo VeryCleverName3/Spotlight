@@ -7,6 +7,14 @@ c.height = window.innerWidth / 2;
 c.width = window.innerWidth;
 var s = c.width;
 
+
+//Update function
+setInterval(update, 1000 / 60);
+function update() {
+    toolSelector();
+    platformDrag();
+}
+
 //Mouse coords
 var mx = 0;
 var my = 0;
@@ -48,7 +56,7 @@ onmousemove = function(e){
     mx = e.clientX;
     my = e.clientY;
 }
-
+/*
 onkeydown = function(e){
 
     //L
@@ -66,7 +74,7 @@ onkeydown = function(e){
 
     //p
     if(e.which == 80){
-        if(rectangle == ""){
+        if (rectangle == "") {
             rectangle += "new PlatformNormal(" + mx / s + " * s, " + my / s + " * s, ";
             rectangleY = my / s;
             rectangleX = mx / s;
@@ -80,5 +88,76 @@ onkeydown = function(e){
             }
             ctx.fillRect((rectangleX * s), rectangleY * s, -((rectangleX * s) - mx), -((rectangleY * s) - my));
         }
+    }
+}*/
+
+
+
+/* Eventually I want to have this so there is a 
+ * "toolbar" of sorts that you can scroll through
+ * and select tools. Right now its basically the
+ * same functionality other than the drawing of
+ * platforms is better in my opinion.
+ * (I didn't have time to make it omnidirectional)
+ * 
+ * Is there a reason you didn't inherit main.js?
+ * 
+ * */
+//Creating tool selector
+var currentKey = null;
+var rectW = 10;
+var rectH = 10;
+var eDown = false;
+
+onkeydown = function (e) {
+    currentKey = e.which;
+}
+onkeyup = function (e) {
+    if (e.which == 69) {
+        currentKey = null;
+    }
+}
+
+function changeImage(k) {
+    document.getElementById('currentTool').remove()
+    var image = document.createElement('img');
+    image.setAttribute("id", "currentTool")
+    if (k == 69) {
+        image.src = "images/platform.png";
+    }
+    else if (k == 76) {
+        image.src = "images/light.png";
+    }
+    document.getElementById('body').appendChild(image); 
+    console.log("hi");
+}
+
+function toolSelector() {
+    if (currentKey == 69) {
+        changeImage(69);
+        if (eDown == false) {
+            rectangleY = my;
+            rectangleX = mx;
+            eDown = true;
+        }
+    }
+    else if (currentKey == 76) {
+        changeImage(76);
+        new LightSource(mx, my);
+        currentKey = null;
+    }
+    else {
+        eDown = false; //Prevents repeat of platformDrag w/o button held
+    }
+}
+
+//Rectangle Tool
+//Hold e to drag plaform
+function platformDrag() {
+    if (eDown) {
+        rectH = Math.abs(my - rectangleY);
+        rectW = -Math.abs(mx - rectangleX);
+        new PlatformNormal(rectangleX, rectangleY, rectW, rectH);
+
     }
 }
