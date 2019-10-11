@@ -496,14 +496,39 @@ function drawPlatforms(){
 
 //Export level (also adds quotations. Won't be necessary if interpreted as string.)
 function exportLevel() {
-    json = JSON.stringify(platforms);
-    json = ("'" + json + "'");
+        for(var i = 0; i < platforms.length; i++){
+                platforms[i].x /= s;
+                platforms[i].y /= s;
+                platforms[i].w /= s;
+                platforms[i].h /= s;
+        }
 
-    var filename = "level.json";
-    download(filename, json);
+        for(var i = 0; i < lights.length; i++){
+                lights[i].x /= s;
+                lights[i].y /= s;
+        }
+
+        json = JSON.stringify([platforms, lights]);
+        json = ("'" + json + "'");
+
+        var filename = "level.json";
+        download(filename, json);
+
+        for(var i = 0; i < platforms.length; i++){
+                platforms[i].x *= s;
+                platforms[i].y *= s;
+                platforms[i].w *= s;
+                platforms[i].h *= s;
+        }
+
+        for(var i = 0; i < lights.length; i++){
+                lights[i].x *= s;
+                lights[i].y *= s;
+        }
 
 }
 
+//download file
 function download(filename, text) {
     var element = document.createElement('a');
     element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
@@ -517,16 +542,25 @@ function download(filename, text) {
     document.body.removeChild(element);
 }
 
-//Import level
+//Import level- doesn't work yet- might work now- does work now
 function importLevel(file) {
     json = JSON.parse(file);
-    for (i = 0; i < json.length; i++) {
-        if (json[i].id == "platform") {
-            console.log(json[i])
+    for (i = 0; i < json[0].length; i++) {
+        if (json[0][i].id == "platform") {
             //platforms[i] = json[i];
-            new PlatformNormal(json[i].x, json[i].y, json[i].w, json[i].h);
+            new PlatformNormal(json[0][i].x * s, json[0][i].y * s, json[0][i].w * s, json[0][i].h * s);
         }
     }
+    for (i = 0; i < json[1].length; i++) {
+        //platforms[i] = json[i];
+        new LightSource(json[1][i].x * s, json[1][i].y * s);
+    }
+}
 
+function getPlatforms(){
+        return platforms;
+}
 
+function getLights(){
+        return lights;
 }
