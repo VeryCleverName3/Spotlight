@@ -91,6 +91,11 @@ onmousemove = function(e){
 }
 var light0 = new LightSource(s / 8, s / 2 - (p1.size / 2));
 var light1 = new LightSource(7 * s / 8, s / 2 - (p1.size / 2));
+function debug(text){
+  ctx.fillStyle = "grey";
+  ctx.font = "10px Arial";
+  ctx.fillText(text, 5, 100);
+}
 //end of debug zone ---------------------------------------------------------------------------------------------
 
 var ground = new PlatformNormal(0, s / 2, s, s / 2);
@@ -110,6 +115,7 @@ function update(){
         p1.draw();
         p2.draw();
         drawPlatforms();
+        debug(JSON.stringify(platforms))
 }
 
 //Constructor for light source
@@ -548,7 +554,12 @@ function importLevel(file) {
     for (i = 0; i < json[0].length; i++) {
         if (json[0][i].id == "platform") {
             //platforms[i] = json[i];
-            new PlatformNormal(json[0][i].x * s, json[0][i].y * s, json[0][i].w * s, json[0][i].h * s);
+            var x = (json[0][i].x * s);
+            var y = (json[0][i].y * s);
+            var w = (json[0][i].w * s);
+            var h = (json[0][i].h * s);
+            console.log(x.toString() + ", " + y.toString() + ", " + w.toString() + ", " + h.toString());
+            new PlatformNormal(x, 600, w, h);
         }
     }
     for (i = 0; i < json[1].length; i++) {

@@ -93,15 +93,15 @@ onkeydown = function(e){
 
 
 
-/* Eventually I want to have this so there is a 
+/* Eventually I want to have this so there is a
  * "toolbar" of sorts that you can scroll through
  * and select tools. Right now its basically the
  * same functionality other than the drawing of
  * platforms is better in my opinion.
  * (I didn't have time to make it omnidirectional)
- * 
+ *
  * Is there a reason you didn't inherit main.js?
- * 
+ *
  * */
 //Creating tool selector
 var currentKey = null;
@@ -129,7 +129,7 @@ function changeImage(k) {
     else if (k == 76) {
         image.src = "images/light.png";
     }
-    document.getElementById('body').appendChild(image); 
+    document.getElementById('body').appendChild(image);
 }
 
 function toolSelector() {
@@ -153,32 +153,50 @@ function toolSelector() {
 
 //Rectangle Tool
 //Hold e to drag plaform
+var stdPlatformX = [];
+var stdPlatformY = [];
 function platformDrag() {
+    var platformX = rectangleX;
+    var platformY = rectangleY;
+
     if (eDown) {
+        stdRectX = 0;
+        stdRectY = 0;
         if (mx > rectangleX) {
             rectW = Math.abs(mx - rectangleX);
+            stdRectX = rectangleX;
         }
         else if (mx < rectangleX) {
-            rectW = -Math.abs(mx - rectangleX);
+            rectW = Math.abs(mx - rectangleX);
+            platformX = rectangleX - rectW;
+            stdRectX = rectangleX;
         }
         if (my > rectangleY) {
             rectH = Math.abs(my - rectangleY);
+            stdRectY = rectangleY;
         }
         else if (my < rectangleY) {
-            rectH = -Math.abs(my - rectangleY);
+            rectH = Math.abs(my - rectangleY);
+            platformY = rectangleY - rectH;
+            stdRectY = rectangleY;
         }
-
+        console.log(rectW)
+        stdPlatformX.push(stdRectX);
+        stdPlatformY.push(stdRectY);
 
         if (platforms.length == 0) {
             new PlatformNormal(0, 0, 0, 0);
         }
         for (i = 0; i < platforms.length; i++) {
-            var x = platforms[i].x;
-            var y = platforms[i].y;
+            var x = stdPlatformX[i];
+            var y = stdPlatformY[i];
             if (x == rectangleX && y == rectangleY) {
                 platforms.splice(i, i);
+                stdPlatformX.splice(i, i);
+                stdPlatformY.splice(i, i);
             }
         }
-        new PlatformNormal(rectangleX, rectangleY, rectW, rectH);
+
+        new PlatformNormal(platformX, platformY, rectW, rectH);
     }
 }
