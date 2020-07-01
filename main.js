@@ -94,7 +94,7 @@ var light1 = new LightSource(7 * s / 8, s / 2 - (p1.size / 2));
 function debug(text){
   ctx.fillStyle = "grey";
   ctx.font = "10px Arial";
-  ctx.fillText(text, 5, 100);
+  //ctx.fillText(text, 5, 100);
 }
 //end of debug zone ---------------------------------------------------------------------------------------------
 
